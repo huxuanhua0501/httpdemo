@@ -25,6 +25,7 @@ public class AsyncDemo {
         httpAsyncClient.start();
         String[] urisToGet = {
                 "http://tcc.taobao.com/cc/json/mobile_tel_segment.htm?tel=17600205063",
+                "http://tcc.taobao.com/cc/json/mobile_tel_segment.htm?tel=17600205063",
 
         };
 
@@ -56,5 +57,6 @@ public class AsyncDemo {
             });
         }
         latch.await();
+        httpAsyncClient.close();
     }
 }

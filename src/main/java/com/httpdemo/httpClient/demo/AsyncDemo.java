@@ -18,7 +18,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  * Created by win7 on 2017/5/31.
  */
-public class AsyncDemo {
+public final class AsyncDemo {
     private static   CloseableHttpAsyncClient httpAsyncClient;
     static {
         ConnectingIOReactor ioReactor = null;
@@ -30,11 +30,14 @@ public class AsyncDemo {
         PoolingNHttpClientConnectionManager cm = new PoolingNHttpClientConnectionManager(ioReactor);
         cm.setMaxTotal(1);
          httpAsyncClient = HttpAsyncClients.custom().setConnectionManager(cm).build();
-        httpAsyncClient.start();
+
     }
 
-    public  static  void go(  CloseableHttpAsyncClient httpAsyncClient){
+    public  static  void go(  CloseableHttpAsyncClient httpAsyncClient) throws InterruptedException, IOException {
+        httpAsyncClient.start();
         String[] urisToGet = {
+                "http://tcc.taobao.com/cc/json/mobile_tel_segment.htm?tel=17600205063",
+                "http://tcc.taobao.com/cc/json/mobile_tel_segment.htm?tel=17600205063",
                 "http://tcc.taobao.com/cc/json/mobile_tel_segment.htm?tel=17600205063",
         };
         final CountDownLatch latch = new CountDownLatch(urisToGet.length);
@@ -52,12 +55,6 @@ public class AsyncDemo {
 
                     } catch (IOException e) {
                         e.printStackTrace();
-                    }finally {
-                        try {
-                            EntityUtils.consume(entity);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
                     }
                 }
 
@@ -73,6 +70,10 @@ public class AsyncDemo {
             });
 
         }
+        latch.await();
+      //  httpAsyncClient.close();
+
+
 
     }
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -80,6 +81,7 @@ public class AsyncDemo {
      go(httpAsyncClient);
 
         }
+        httpAsyncClient.close();
 
 
     }
